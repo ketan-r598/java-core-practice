@@ -24,7 +24,6 @@ public class MutexDemo {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                break;
             }
         }
     }
@@ -38,7 +37,6 @@ public class MutexDemo {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                break;
             }
         }
     }

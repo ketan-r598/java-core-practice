@@ -32,8 +32,6 @@ public class SingnallingDemo {
             System.out.println("Task B is done in Thread - [ " + name + " ]");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } finally {
-            return;
         }
 
     };

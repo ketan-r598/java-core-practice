@@ -28,8 +28,6 @@ public class MutexDemo {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } finally {
-                return;
             }
         }
     }
@@ -43,8 +41,6 @@ public class MutexDemo {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } finally {
-                return;
             }
         }
     }
