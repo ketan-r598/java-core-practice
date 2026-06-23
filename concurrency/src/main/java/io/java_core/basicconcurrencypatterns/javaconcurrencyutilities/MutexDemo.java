@@ -20,11 +20,11 @@ public class MutexDemo {
             try {
                 if(lock.tryLock(500, TimeUnit.MILLISECONDS)) {
                     count++;
+                    lock.unlock();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } finally {
-                lock.unlock();
+                break;
             }
         }
     }
@@ -34,11 +34,11 @@ public class MutexDemo {
             try {
                 if(lock.tryLock(500, TimeUnit.MILLISECONDS)) {
                     count--;
+                    lock.unlock();
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-            } finally {
-                lock.unlock();
+                break;
             }
         }
     }

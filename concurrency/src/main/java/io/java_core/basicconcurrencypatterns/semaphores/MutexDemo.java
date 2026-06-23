@@ -20,12 +20,16 @@ public class MutexDemo {
     public void increment() {
         for(int i = 0; i < 500_000; ++i) {
             try {
-                mutex.tryAcquire(500, TimeUnit.MILLISECONDS);
-                count++;
+                if(mutex.tryAcquire(500, TimeUnit.MILLISECONDS)) {
+                    count++;
+                    mutex.release();
+                } else {
+                    System.out.println("Not able to acquire the lock...");
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                mutex.release();
+                return;
             }
         }
     }
@@ -33,12 +37,14 @@ public class MutexDemo {
     public void decrement() {
         for(int i = 0; i < 500_000; ++i) {
             try {
-                mutex.tryAcquire(500, TimeUnit.MILLISECONDS);
-                count--;
+                if(mutex.tryAcquire(500, TimeUnit.MILLISECONDS)) {
+                    count--;
+                    mutex.release();
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                mutex.release();
+                return;
             }
         }
     }

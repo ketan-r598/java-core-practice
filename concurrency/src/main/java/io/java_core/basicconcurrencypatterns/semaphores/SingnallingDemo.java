@@ -28,11 +28,13 @@ public class SingnallingDemo {
 
         try {
             taskADone.acquire();
+            System.out.println("Task A is Done. Starting task B...");
+            System.out.println("Task B is done in Thread - [ " + name + " ]");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } finally {
+            return;
         }
 
-        System.out.println("Task A is Done. Starting task B...");
-        System.out.println("Task B is done in Thread - [ " + name + " ]");
     };
 }

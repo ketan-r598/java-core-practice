@@ -20,8 +20,11 @@ public class SignallingDemo {
     public void taskB () {
         String name = Thread.currentThread().getName();
         try {
-            a1Done.await(500, TimeUnit.MILLISECONDS);
-            System.out.println("Thread [ " + name + " ] completed its task...");
+            if(a1Done.await(500, TimeUnit.MILLISECONDS)) {
+                System.out.println("Thread [ " + name + " ] completed its task...");
+            } else {
+                System.out.println("Could not acquire the lock...");
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
