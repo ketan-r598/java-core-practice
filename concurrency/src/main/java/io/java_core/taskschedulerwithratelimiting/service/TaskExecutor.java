@@ -3,7 +3,6 @@ package io.java_core.taskschedulerwithratelimiting.service;
 import io.java_core.taskschedulerwithratelimiting.model.Task;
 import io.java_core.taskschedulerwithratelimiting.model.TaskStatus;
 
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,30 +12,32 @@ public class TaskExecutor {
     private TaskScheduler taskScheduler;
     private volatile boolean running = true;
     private Thread consumerThread;
+    private RateLimiter rateLimiter;
 
-    public TaskExecutor(TaskScheduler taskScheduler) {
+    public TaskExecutor(TaskScheduler taskScheduler, RateLimiter rateLimiter) {
         executorService = Executors.newFixedThreadPool(5);
         this.taskScheduler = taskScheduler;
+        this.rateLimiter = rateLimiter;
     }
 
     public void start() {
         this.consumerThread = new Thread(() -> {
             while (running) {
                 try {
-                    Optional<Task> t = taskScheduler.getTask();
+                    Task task = taskScheduler.getTask();
 
-                    if (t.isPresent()) {
-                        execute(t.get());
+                    // Put the guards here meaning use the limiter here...
+                    if (rateLimiter.tryAcquire(task.getUserId())) {
+                        execute(task);
+                    } else {
+                        System.err.println("Request Limit Reached... Try after sometime...Thread - [ " + Thread.currentThread().getName() + " ] and Task - [ " + task.toString() + " ]");
                     }
-
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
-
             }
         });
-
         consumerThread.start();
     }
 
@@ -45,13 +46,13 @@ public class TaskExecutor {
 
         executorService.submit(() -> {
             try {
-                T result = task.getPayload().call();
+                var result = task.getPayload().call();
                 task.setStatus(TaskStatus.COMPLETED);
                 System.out.println(result);
-                return result;
             } catch (Exception e) {
                 task.setStatus(TaskStatus.FAILED);
-                throw e;
+                System.out.println("Task - " + task + " failed on Thread - [ " + Thread.currentThread().getName() + " ]");
+                System.err.println("Exception " + e.getMessage());
             }
         });
     }

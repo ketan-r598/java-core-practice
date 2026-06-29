@@ -50,4 +50,13 @@ public class Task<T> {
     public int hashCode() {
         return Objects.hashCode(taskId);
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "userId=" + userId +
+                ", taskId=" + taskId +
+                ", status=" + status +
+                '}';
+    }
 }
