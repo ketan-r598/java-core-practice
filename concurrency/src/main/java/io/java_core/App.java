@@ -21,10 +21,10 @@ public class App {
 
         taskExecutor.start();
 
-        for (int i = 1; i <= 50; ++i) {
+        for (int i = 1; i <= 20; ++i) {
             int finalI = i;
             Callable<String> payload = () -> {
-                Thread.sleep(500);
+                Thread.sleep(100);
                 return "Thread - [ " + Thread.currentThread().getName() + " ] has completed the task - " + finalI + "th with owner - " + (finalI % 2);
             };
             Task<String> task00 = new Task(i * 10, i % 2, TaskStatus.PENDING, payload);
@@ -37,7 +37,6 @@ public class App {
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            taskExecutor.shutdown();
             Thread.currentThread().interrupt();
         }
 

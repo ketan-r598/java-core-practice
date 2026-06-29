@@ -27,11 +27,11 @@ public class TaskExecutor {
                     Task task = taskScheduler.getTask();
 
                     // Put the guards here meaning use the limiter here...
-                    if (rateLimiter.tryAcquire(task.getUserId())) {
-                        execute(task);
-                    } else {
-                        System.err.println("Request Limit Reached... Try after sometime...Thread - [ " + Thread.currentThread().getName() + " ] and Task - [ " + task.toString() + " ]");
+                    while (running && !rateLimiter.tryAcquire(task.getUserId())) {
+                        Thread.sleep(100);
                     }
+
+                    execute(task);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
